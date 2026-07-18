@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decentralized Blockchain Voting Ledger</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(20, 30, 55, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #06b6d4;
+            --accent-glow: rgba(139, 92, 246, 0.45);
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'Space Grotesk', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(at 10% 20%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100/vh;
+            overflow-x: hidden;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Style */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .network-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            box-shadow: 0 0 10px var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        /* 2-Column main section */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        @media (max-width: 968px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glassmorphic card definition */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Party selector grid */
+        .party-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .party-card {
+            border: 1px solid var(--card-border);
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+
+        .party-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .party-card.selected {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+        }
+
+        .party-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .candidate-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--accent-secondary);
+            border: 1.5px solid var(--card-border);
+        }
+
+        .party-card.selected .candidate-avatar {
+            border-color: var(--accent-primary);
+            color: white;
+            background: var(--accent-primary);
+        }
+
+        .radio-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+
+        .party-card.selected .radio-dot {
+            border-color: var(--accent-primary);
+        }
+
+        .party-card.selected .radio-dot::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+
+        /* Buttons styling */
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-alt, #7c3aed));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            transition: all 0.25s ease;
+        }
+
+        .btn:hover {
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-mine {
+            background: linear-gradient(135deg, var(--accent-secondary), #0891b2);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.25);
+        }
+
+        .btn-mine:hover {
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+        }
+
+        /* Notification Feedbacks */
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--success-color);
+            color: #34d399;
+            display: block;
+        }
+
+        .feedback.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--error-color);
+            color: #f87171;
+            display: block;
+        }
+
+        /* Scoreboard design */
+        .scoreboard {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .candidate-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .candidate-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .party-name {
+            font-weight: 600;
+        }
+
+        .vote-count {
+            font-family: var(--font-mono);
+            color: var(--accent-secondary);
+            font-weight: bold;
+        }
+
+        .progress-track {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50px;
+            transition: width 0.8s cubic-bezier(0.1, 0.8, 0.25, 1);
+        }
+
+        .metrics {
+            margin-top: 1rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 0.85rem;
+            text-align: center;
+            border: 1px solid var(--card-border);
+        }
+
+        .metric-val {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: var(--font-mono);
+            color: white;
+        }
+
+        .metric-lbl {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Unconfirmed Pool list */
+        .unconfirmed-pool {
+            margin-top: 1.5rem;
+        }
+
+        .unconfirmed-list {
+            margin-top: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .unconfirmed-item {
+            background: rgba(139, 92, 246, 0.06);
+            border: 1px dashed rgba(139, 92, 246, 0.2);
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+
+        .pool-empty-state {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--card-border);
+            border-radius: 12px;
+        }
+
+        /* Blockchain Ledger Explorer */
+        .explorer-section {
+            margin-top: 2rem;
+        }
+
+        .explorer-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .scroll-wrapper {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding: 1rem 0.5rem 1.5rem 0.5rem;
+            scroll-behavior: smooth;
+        }
+
+        /* Customize scrollbars */
+        .scroll-wrapper::-webkit-scrollbar,
+        .unconfirmed-list::-webkit-scrollbar {
+            height: 8px;
+            width: 6px;
+        }
+
+        .scroll-wrapper::-webkit-scrollbar-track,
+        .unconfirmed-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .scroll-wrapper::-webkit-scrollbar-thumb,
+        .unconfirmed-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .scroll-wrapper::-webkit-scrollbar-thumb:hover,
+        .unconfirmed-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .block-node {
+            flex: 0 0 320px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .block-node.genesis {
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.1);
+        }
+
+        .block-node:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+        }
+
+        .block-node:not(:last-child)::after {
+            content: '➔';
+            position: absolute;
+            right: -24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .block-index {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: white;
+            font-family: var(--font-mono);
+        }
+
+        .block-tag {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.6rem;
+            border-radius: 5px;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+        }
+
+        .block-node.genesis .block-tag {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+
+        .block-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .block-field {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .block-hash {
+            font-size: 0.7rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .block-hash:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .block-txs-body {
+            max-height: 110px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.6rem;
+        }
+
+        .block-tx-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .block-tx-voter {
+            font-weight: 600;
+            color: #d1d5db;
+        }
+
+        .block-tx-party {
+            color: var(--accent-secondary);
+        }
+
+        .no-txs {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            padding: 0.5rem 0;
+        }
+
+        /* Mining Animation Overlay */
+        .mining-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .mining-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cube {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate_cube 3s infinite linear;
+            margin-bottom: 2rem;
+        }
+
+        .cube div {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(6, 182, 212, 0.25);
+            border: 2px solid var(--accent-secondary);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .front {
+            transform: translateZ(30px);
+        }
+
+        .back {
+            transform: rotateY(180deg) translateZ(30px);
+        }
+
+        .left {
+            transform: rotateY(-90deg) translateZ(30px);
+        }
+
+        .right {
+            transform: rotateY(90deg) translateZ(30px);
+        }
+
+        .top {
+            transform: rotateX(90deg) translateZ(30px);
+        }
+
+        .bottom {
+            transform: rotateX(-90deg) translateZ(30px);
+        }
+
+        @keyframes rotate_cube {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+
+            100% {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        .mining-status-text {
+            font-size: 1.1rem;
+            color: var(--accent-secondary);
+            font-family: var(--font-mono);
+            letter-spacing: 0.1em;
+            animation: text_blink 1.5s infinite;
+        }
+
+        @keyframes text_blink {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h1>Decentralized Voting System</h1>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary);">Secured by Proof of Work Consensus</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="network-status">
+                    <div class="status-dot"></div>
+                    <span>LEDGER STATE: LIVE</span>
+                </div>
+                <a href="/admin" class="network-status"
+                    style="color: var(--accent-secondary); text-decoration: none; transition: border-color 0.2s;">
+                    🔑 Admin Panel
+                </a>
+            </div>
+        </header>
+
+        <!-- Dynamic Main Layout -->
+        <div class="workspace-grid">
+            <!-- Cast Vote Card -->
+            <div class="card">
+                <h2>🗳️ Cast Your Ballot</h2>
+
+                <!-- Voting Inactive Banner -->
+                <div id="voting-inactive-banner"
+                    style="display: none; padding: 1.25rem; border-radius: 12px; text-align: center; border: 1px dashed rgba(234,179,8,0.4); background: rgba(234,179,8,0.06); color: #facc15; font-weight: 600; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    🔒 Registration Phase Active<br>
+                    <span
+                        style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 400; margin-top: 0.4rem; display: block;">Polls
+                        are not open yet. Voting will unlock once the administrator activates the voting period.</span>
+                </div>
+
+                <!-- Voting Ended Banner -->
+                <div id="voting-ended-banner"
+                    style="display: none; padding: 1.25rem; border-radius: 12px; text-align: center; border: 1px dashed rgba(239,68,68,0.4); background: rgba(239,68,68,0.06); color: #f87171; font-weight: 600; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    🛑 Election Has Ended<br>
+                    <span
+                        style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 400; margin-top: 0.4rem; display: block;">The
+                        polls have closed. No further votes can be cast. Final results are displayed below.</span>
+                </div>
+
+                <form id="vote-form" onsubmit="submitVote(event)">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Voter Profile Credentials</label>
+                        <div class="input-wrapper" style="margin-bottom: 0.75rem;">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="voter-name" placeholder="Full Name (as registered)" required
+                                autocomplete="off">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem;">
+                            <div class="input-wrapper">
+                                <span class="input-icon">🎂</span>
+                                <input type="number" id="voter-age" placeholder="Age" min="18" required
+                                    style="width: 100%; padding: 0.9rem 1rem 0.9rem 2.8rem; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--card-border); border-radius: 12px; color: white;">
+                            </div>
+                            <div class="input-wrapper">
+                                <span class="input-icon">💳</span>
+                                <input type="text" id="voter-aadhar" placeholder="12-digit Aadhar Number"
+                                    pattern="\d{12}" maxlength="12" required
+                                    style="width: 100%; padding: 0.9rem 1rem 0.9rem 2.8rem; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--card-border); border-radius: 12px; color: white;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Candidate / Party</label>
+                        <div class="party-grid" id="party-options">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">Cast Vote Securely</button>
+                </form>
+
+                <div id="vote-feedback" class="feedback"></div>
+            </div>
+
+            <!-- Standings & Mining Controller -->
+            <div class="card">
+                <h2>📈 Real-Time Standings</h2>
+                <div class="scoreboard" id="scoreboard">
+                    <!-- Dynamic Progress bars -->
+                </div>
+
+                <div class="metrics" style="grid-template-columns: 1fr;">
+                    <div class="metric-card" style="text-align: center;">
+                        <div class="metric-val" id="total-votes">0</div>
+                        <div class="metric-lbl">Verified Votes on Ledger</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ledger visual browser -->
+        <div class="card explorer-section">
+            <div class="explorer-title">
+                <h2>⛓️ Interactive Blockchain Ledger Explorer</h2>
+                <span id="block-count"
+                    style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">Blocks:
+                    1</span>
+            </div>
+            <div class="scroll-wrapper" id="blockchain-track">
+                <!-- Blockchain rendering -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Loading Screen whilst mining hash -->
+    <div class="mining-overlay" id="mining-overlay">
+        <div class="cube">
+            <div class="front"></div>
+            <div class="back"></div>
+            <div class="left"></div>
+            <div class="right"></div>
+            <div class="top"></div>
+            <div class="bottom"></div>
+        </div>
+        <div class="mining-status-text">MINING PROOF OF WORK...</div>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem; font-family: var(--font-mono);">
+            Hashing header nonce targeting target prefixes</p>
+    </div>
+
+    <!-- App JavaScript Logic -->
+    <script>
+        let selectedParty = null;
+        let partiesList = [];
+
+        // Load Page Details
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchParties();
+            refreshState();
+            // Auto refresh state every 4 seconds to poll changes
+            setInterval(refreshState, 4000);
+        });
+
+        // Request list of political options
+        async function fetchParties() {
+            try {
+                const response = await fetch('/parties');
+                partiesList = await response.json();
+                renderPartyGrid(partiesList);
+            } catch (err) {
+                console.error("Error fetching parties list: ", err);
+            }
+        }
+
+        // Render Selection list
+        function renderPartyGrid(parties) {
+            const container = document.getElementById('party-options');
+            container.innerHTML = '';
+
+            parties.forEach(party => {
+                const card = document.createElement('div');
+                card.className = 'party-card';
+                card.onclick = () => selectPartyCard(card, party);
+
+                // Initial capital as avatar label
+                const initLetter = party.charAt(0);
+
+                card.innerHTML = `
+                    <div class="party-info">
+                        <div class="candidate-avatar">${initLetter}</div>
+                        <span style="font-weight: 600;">${party}</span>
+                    </div>
+                    <div class="radio-dot"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectPartyCard(card, party) {
+            document.querySelectorAll('.party-card').forEach(el => el.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedParty = party;
+        }
+
+
+
+        // Submit Ballot & Auto-Mine Block
+        async function submitVote(event) {
+            event.preventDefault();
+            const voterNameInput = document.getElementById('voter-name');
+            const voterAgeInput = document.getElementById('voter-age');
+            const voterAadharInput = document.getElementById('voter-aadhar');
+            const feedback = document.getElementById('vote-feedback');
+            const overlay = document.getElementById('mining-overlay');
+
+            feedback.className = 'feedback';
+            feedback.style.display = 'none';
+
+            if (!selectedParty) {
+                feedback.innerHTML = "⚠️ Please select a candidate/party to cast your vote.";
+                feedback.className = 'feedback error';
+                return;
+            }
+
+            const name = voterNameInput.value.trim();
+            const age = parseInt(voterAgeInput.value);
+            const aadhar = voterAadharInput.value.trim();
+
+            if (!name) {
+                feedback.innerHTML = "⚠️ Voter name cannot be empty.";
+                feedback.className = 'feedback error';
+                return;
+            }
+            if (isNaN(age) || age < 18) {
+                alert("Eligibility Warning: You must be at least 18 years old to cast a vote.");
+                feedback.innerHTML = "⚠️ Voter must be 18 years or older.";
+                feedback.className = 'feedback error';
+                return;
+            }
+            if (aadhar.length !== 12 || !/^\d+$/.test(aadhar)) {
+                alert("Invalid Format: Aadhar number must be exactly 12 digits.");
+                feedback.innerHTML = "⚠️ Aadhar must be a 12-digit numeric identifier.";
+                feedback.className = 'feedback error';
+                return;
+            }
+
+            // Trigger visual mining animation
+            overlay.classList.add('active');
+
+            try {
+                const response = await fetch('/vote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, age: age, aadhar: aadhar, party: selectedParty })
+                });
+
+                const data = await response.json();
+
+                // Keep loader visible for 1.2s so the beautiful 3D rotating mining block can be seen
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    if (response.ok) {
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = `✅ Ballot cast and mined! Block <strong>#${data.mining_details.index}</strong> successfully appended to the blockchain ledger.<br><span style="font-size: 0.8rem; font-family: var(--font-mono);">Hash: ${data.mining_details.hash}</span>`;
+                        // Reset fields
+                        voterNameInput.value = '';
+                        voterAgeInput.value = '';
+                        voterAadharInput.value = '';
+                        // Reset selected card
+                        document.querySelectorAll('.party-card').forEach(el => el.classList.remove('selected'));
+                        selectedParty = null;
+                        // Refresh state
+                        refreshState();
+                    } else {
+                        if (data && data.message && data.message.includes("already cast a vote")) {
+                            alert("Security Action: This Aadhar number has already cast a vote!");
+                        }
+                        feedback.className = 'feedback error';
+                        feedback.innerHTML = `❌ Error: ${data.message || 'Submission failed'}`;
+                    }
+                }, 1200);
+            } catch (err) {
+                overlay.classList.remove('active');
+                feedback.className = 'feedback error';
+                feedback.innerHTML = '❌ Server network error occurred. Please try again.';
+            }
+        }
+
+        // Refresh stats, chains, pending transactions
+        async function refreshState() {
+            try {
+                // Fetch voting status
+                const statusRes = await fetch('/status');
+                const statusData = await statusRes.json();
+                const electionState = statusData.election_state;
+
+                const form = document.getElementById('vote-form');
+                const prepBanner = document.getElementById('voting-inactive-banner');
+                const endedBanner = document.getElementById('voting-ended-banner');
+
+                if (electionState === "LIVE") {
+                    if (form) form.style.display = 'block';
+                    if (prepBanner) prepBanner.style.display = 'none';
+                    if (endedBanner) endedBanner.style.display = 'none';
+                } else if (electionState === "ENDED") {
+                    if (form) form.style.display = 'none';
+                    if (prepBanner) prepBanner.style.display = 'none';
+                    if (endedBanner) endedBanner.style.display = 'block';
+                } else { // "PREPARATION"
+                    if (form) form.style.display = 'none';
+                    if (prepBanner) prepBanner.style.display = 'block';
+                    if (endedBanner) endedBanner.style.display = 'none';
+                }
+
+                // Fetch chain
+                const chainRes = await fetch('/chain');
+                const chainData = await chainRes.json();
+
+                // Fetch Tally
+                const resultsRes = await fetch('/results');
+                const resultsData = await resultsRes.json();
+
+                // 1. Update stats indicators
+                document.getElementById('total-votes').innerText = resultsData.total_mined_votes;
+                document.getElementById('block-count').innerText = `Blocks: ${chainData.length}`;
+
+                // 2. Render Scoreboard
+                renderScoreboard(resultsData);
+
+                // 3. Render Ledger Blocks
+                renderChainExplorer(chainData.chain);
+            } catch (err) {
+                console.error("State refresh failure: ", err);
+            }
+        }
+
+        function renderScoreboard(results) {
+            const container = document.getElementById('scoreboard');
+            container.innerHTML = '';
+
+            const total = results.total_mined_votes;
+
+            partiesList.forEach(party => {
+                const minedVal = results.mined_results[party] || 0;
+                const pendingVal = results.pending_results[party] || 0;
+
+                const percent = total > 0 ? ((minedVal / total) * 100).toFixed(1) : 0;
+
+                const row = document.createElement('div');
+                row.className = 'candidate-row';
+                row.innerHTML = `
+                    <div class="candidate-meta">
+                        <span class="party-name">${party}</span>
+                        <div>
+                            <span class="vote-count">${minedVal} votes</span>
+                            ${pendingVal > 0 ? `<span style="font-size: 0.8rem; color: #a78bfa; margin-left: 0.35rem;">(+${pendingVal} pending)</span>` : ''}
+                            <span style="color: var(--text-secondary); margin-left: 0.5rem; font-size: 0.85rem;">${percent}%</span>
+                        </div>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar" style="width: ${percent}%"></div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function renderPendingQueue(count, pendingResults) {
+            const container = document.getElementById('unconfirmed-list');
+            container.innerHTML = '';
+
+            if (count === 0) {
+                container.innerHTML = `<div class="pool-empty-state">No pending votes in memory. Transaction pool is empty.</div>`;
+                return;
+            }
+
+            fetch('/unconfirmed')
+                .then(res => res.json())
+                .then(txs => {
+                    txs.forEach(tx => {
+                        const div = document.createElement('div');
+                        div.className = 'unconfirmed-item';
+                        div.innerHTML = `
+                            <span>ID: <strong>${tx.voter_id}</strong></span>
+                            <span class="block-tx-party">${tx.party}</span>
+                        `;
+                        container.appendChild(div);
+                    });
+                });
+        }
+
+        function renderChainExplorer(chain) {
+            const container = document.getElementById('blockchain-track');
+            container.innerHTML = '';
+
+            // Render right to left or standard order
+            chain.forEach(block => {
+                const node = document.createElement('div');
+                node.className = `block-node ${block.index === 0 ? 'genesis' : ''}`;
+
+                const formattedTime = new Date(block.timestamp * 1000).toLocaleTimeString();
+
+                let txListHTML = '';
+                if (block.transactions && block.transactions.length > 0) {
+                    block.transactions.forEach(tx => {
+                        txListHTML += `
+                            <div class="block-tx-row">
+                                <span class="block-tx-voter">${tx.voter_id}</span>
+                                <span class="block-tx-party">${tx.party}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    txListHTML = `<div class="no-txs">No transactions (Genesis Block)</div>`;
+                }
+
+                node.innerHTML = `
+                    <div class="block-header">
+                        <span class="block-index">BLOCK #${block.index}</span>
+                        <span class="block-tag">${block.index === 0 ? 'Genesis' : 'Mined'}</span>
+                    </div>
+                    <div class="block-meta">
+                        <div class="block-field"><span>Time:</span> <span>${formattedTime}</span></div>
+                        <div class="block-field"><span>Nonce:</span> <span style="color: var(--accent-secondary); font-weight: bold;">${block.nonce}</span></div>
+                        <div class="block-field"><span>Prev Hash:</span> <span class="block-hash" title="${block.previous_hash}" onclick="navigator.clipboard.writeText('${block.previous_hash}'); alert('Copied Hash!')">${block.previous_hash}</span></div>
+                        <div class="block-field"><span>Hash:</span> <span class="block-hash" title="${block.hash}" onclick="navigator.clipboard.writeText('${block.hash}'); alert('Copied Hash!')">${block.hash}</span></div>
+                    </div>
+                    <div class="block-txs-body">
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 0.3rem; text-transform: uppercase;">Ballot Contents:</div>
+                        ${txListHTML}
+                    </div>
+                `;
+                container.appendChild(node);
+            });
+        }
+    </script>
+</body>
+
+</html>
