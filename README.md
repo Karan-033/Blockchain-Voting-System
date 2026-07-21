@@ -1,4 +1,4 @@
-# Premium Blockchain-Powered Voting System
+# Blockchain-Powered Voting System
 
 A decentralized, tamper-proof, and real-time voting ledger built using Python, Flask, and Vanilla CSS/JavaScript. The application operates a light in-memory Proof-of-Work blockchain consensus, preventing double-voting and ensuring the immutability of cast ballots.
 
