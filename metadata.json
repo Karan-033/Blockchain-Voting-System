@@ -1,0 +1,8 @@
+{
+  "name": "BharatChain - Blockchain Voting System",
+  "description": "Decentralized and tamper-proof blockchain voting platform with Election Commissioner administration, voter eligibility verification, and immutable ledger auditing.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
